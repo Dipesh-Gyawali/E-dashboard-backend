@@ -28,4 +28,13 @@ app.post("/add-product", async (req, resp) => {
   let result = await product.save();
   resp.send(result);
 });
+app.get("/products", async (req, resp) => {
+  const products = await Product.find();
+  if (products.length > 0) {
+    resp.send(products);
+  } else {
+    resp.send({ result: "No Product found" });
+  }
+  resp.send(products);
+});
 app.listen(5000);
