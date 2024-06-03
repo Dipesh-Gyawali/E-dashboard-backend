@@ -81,7 +81,7 @@ app.put("/product/:id", async (req, resp) => {
   resp.send(result);
 });
 
-app.get("/search/:key", async (req, resp) => {
+app.get("/search/:key", verifyToken, async (req, resp) => {
   let result = await Product.find({
     $or: [
       {
@@ -97,5 +97,21 @@ app.get("/search/:key", async (req, resp) => {
   });
   resp.send(result);
 });
+
+function verifyToken(req, resp, next) {
+  let token = req.headers["authorization"];
+  if (token) {
+    token = token.split(" ")[1];
+    Jwt.verify(token, jwtKey, (err, valid) => {
+      if (err) {
+        resp.status(401).send({ result: "Please provide valid token" });
+      } else {
+        next();
+      }
+    });
+  } else {
+    resp.status(403).send({ result: "Please add token with header" });
+  }
+}
 
 app.listen(5000);
