@@ -45,13 +45,13 @@ app.post("/login", async (req, resp) => {
   }
 });
 
-app.post("/add-product", async (req, resp) => {
+app.post("/add-product", verifyToken, async (req, resp) => {
   let product = await Product(req.body);
   let result = await product.save();
   resp.send(result);
 });
 
-app.get("/products", async (req, resp) => {
+app.get("/products", verifyToken, async (req, resp) => {
   const products = await Product.find();
   if (products.length > 0) {
     resp.send(products);
@@ -60,11 +60,11 @@ app.get("/products", async (req, resp) => {
   }
 });
 
-app.delete("/product/:id", async (req, resp) => {
+app.delete("/product/:id", verifyToken, async (req, resp) => {
   let result = await Product.deleteOne({ _id: req.params.id });
   resp.send(result);
 }),
-  app.get("/product/:id", async (req, resp) => {
+  app.get("/product/:id", verifyToken, async (req, resp) => {
     let result = await Product.findOne({ _id: req.params.id });
     if (result) {
       resp.send(result);
@@ -73,7 +73,7 @@ app.delete("/product/:id", async (req, resp) => {
     }
   });
 
-app.put("/product/:id", async (req, resp) => {
+app.put("/product/:id", verifyToken, async (req, resp) => {
   let result = await Product.updateOne(
     { _id: req.params.id },
     { $set: req.body }
